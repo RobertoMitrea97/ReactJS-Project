@@ -1,0 +1,36 @@
+version: '3'
+services:
+    nginx:
+        container_name: practica-react-nginx
+        restart: unless-stopped
+        build:
+            context: ./
+            dockerfile: docker/nginx/nginx.dockerfile
+        volumes:
+             - ./my-app:/usr/src/app/my-app
+             - /usr/src/app/my-app/node_modules
+        ports:
+            - "3000:80"
+        depends_on:
+            - react
+
+    react:
+        user: 1000:1000
+        container_name: practica-react-react
+        restart: unless-stopped
+        build:
+            context: ./
+            dockerfile: docker/node/react.dockerfile
+        volumes:
+             - ./my-app:/usr/src/app/my-app
+             - /usr/src/app/my-app/node_modules
+        ports:
+            - "3000"
+
+    dev:
+        image: "node:lts-bullseye"
+        container_name: practica-react-nodejs
+        user: "node"
+        working_dir: /home/node/dev
+        volumes:
+            - ./:/home/node/dev
